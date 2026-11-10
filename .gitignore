@@ -1,0 +1,8 @@
+*
+!.gitignore
+!index.html
+!.nojekyll
+!fonts/
+!fonts/**
+!media/
+!media/**
