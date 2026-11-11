@@ -6,3 +6,7 @@
 !fonts/**
 !media/
 !media/**
+!css/
+!css/**
+!js/
+!js/**
