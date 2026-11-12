@@ -187,3 +187,4 @@ video::-webkit-media-controls-start-playback-button{display:none!important;-webk
 @keyframes open{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0)}}
 
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+.foot .sis{display:block;margin-top:.9rem;letter-spacing:.24em}.foot .sis a{color:inherit;text-decoration:none}.foot .sis a:hover{color:var(--ink,#fff)}
