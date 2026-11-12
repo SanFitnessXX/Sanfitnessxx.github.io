@@ -1,4 +1,4 @@
-/* Ko-fi nudge: a small card shown at most once a week per visitor.
+/* Ko-fi nudge: a small card shown on every visit.
    Settings come from the script tag:
    data-url   Ko-fi link
    data-title first line
@@ -8,9 +8,6 @@
    data-side  "left" or "right" */
 (function(){
   var s=document.currentScript; if(!s) return;
-  var KEY='kofi-nudge-seen', WEEK=7*864e5, now=Date.now(), last=0;
-  try{ last=+localStorage.getItem(KEY)||0 }catch(e){ return }
-  if(now-last<WEEK) return;
   var d=s.dataset, dark=d.tone==='dark', side=d.side==='right'?'right':'left';
   var rm=matchMedia('(prefers-reduced-motion: reduce)').matches;
   var css='.kn{position:fixed;'+side+':16px;bottom:max(16px,env(safe-area-inset-bottom));z-index:9999;width:min(300px,calc(100vw - 32px));box-sizing:border-box;padding:16px 40px 16px 18px;border-radius:14px;'
@@ -37,7 +34,6 @@
     function close(){ c.classList.remove('on'); setTimeout(function(){c.remove()},700) }
     c.querySelector('button').onclick=close; a.addEventListener('click',function(){ setTimeout(close,300) });
     document.body.appendChild(c);
-    try{ localStorage.setItem(KEY,String(now)) }catch(e){}
     requestAnimationFrame(function(){ requestAnimationFrame(function(){ c.classList.add('on'); if(!rm) c.classList.add('fl') }) });
   }
   setTimeout(show,4000);
