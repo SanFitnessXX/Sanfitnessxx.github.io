@@ -26,7 +26,7 @@ function drawMat(){
 var toggle=$('toggle'),lapsing=false,lapseTimer=0;
 function clockMood(){var d=new Date();return window.__moodAt(d.getHours()+d.getMinutes()/60)}
 function wantMood(){return SF.pref==='day'?'noon':SF.pref==='night'?'night':clockMood()}
-function label(){toggle.setAttribute('aria-label',SF.pref==='auto'?'Light follows the time of day. Switch to day.':SF.pref==='day'?'Day. Switch to night.':'Night. Switch to the time of day.')}
+function label(){toggle.setAttribute('aria-label',root.dataset.theme==='dark'?'Switch to day':'Switch to night')}
 function setMood(name){
   if(SF.M&&SF.M.name===name)return;
   var prev=SF.M,M=SF.MOODS[name],flip=!prev||prev.th!==M.th;
@@ -34,12 +34,17 @@ function setMood(name){
   document.querySelector('meta[name=theme-color]').content=M.bg;
   SF.sky.onMood();if(flip)SF.fly.build();SF.ocean.onMood(prev);
   if(reduce)SF.fly.still();
+  if(toggle)label();
 }
-toggle.addEventListener('click',function(){
-  SF.pref=SF.pref==='auto'?'day':SF.pref==='day'?'night':'auto';root.dataset.pref=SF.pref;
-  try{localStorage.setItem('sanfit-light',SF.pref)}catch(e){}
+function setPref(p){
+  SF.pref=p;root.dataset.pref=p;
+  try{localStorage.setItem('sanfit-light',p)}catch(e){}
   stopLapse();label();setMood(wantMood());
-});
+}
+/* one tap: straight between day and night; the Display menu also offers time of day */
+toggle.addEventListener('click',function(){setPref(root.dataset.theme==='dark'?'day':'night')});
+window.__display={themes:[['auto','Time of day'],['day','Day'],['night','Night']],get:function(){return SF.pref},set:setPref,
+  motion:function(){location.reload()}};
 setInterval(function(){if(!lapsing)setMood(wantMood())},60000);
 
 /* ---- the star: one whole day of light, then back to now ---- */

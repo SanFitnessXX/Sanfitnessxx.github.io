@@ -4,7 +4,7 @@ window.SF=(function(){
 var root=document.documentElement,fx=document.getElementById('fx');
 var SF={
   root:root,
-  reduce:matchMedia('(prefers-reduced-motion: reduce)').matches,
+  reduce:matchMedia('(prefers-reduced-motion: reduce)').matches||(function(){try{return localStorage.getItem('disp-calm')==='1'}catch(e){return false}})(),
   playing:root.classList.contains('play'),
   t0:performance.now(),
   $:function(id){return document.getElementById(id)},

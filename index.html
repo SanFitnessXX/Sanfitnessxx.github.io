@@ -29,7 +29,7 @@
 <script>
 window.__moodAt=function(h){return h<5?'night':h<7.5?'dawn':h<11?'morning':h<16?'noon':h<18.5?'golden':h<20.5?'blue':'night'};
 window.__moodBg={dawn:'#f7f8fa',morning:'#ffffff',noon:'#ffffff',golden:'#f8f6f2',blue:'#0b1330',night:'#000000'};
-(function(){var r=document.documentElement,p,s,m=matchMedia('(prefers-reduced-motion: reduce)').matches,d=new Date();
+(function(){var r=document.documentElement,p,s,m=matchMedia('(prefers-reduced-motion: reduce)').matches,d=new Date();try{m=m||localStorage.getItem('disp-calm')==='1'}catch(e){}
 try{p=localStorage.getItem('sanfit-light')}catch(e){}
 if(p!=='day'&&p!=='night')p='auto';
 var n=p==='day'?'noon':p==='night'?'night':__moodAt(d.getHours()+d.getMinutes()/60);
@@ -105,12 +105,13 @@ if(!s&&!m)r.classList.add('play')})();
 <a class="sr" id="flyLink" href="https://www.instagram.com/seraphicstyler" rel="noopener">Seraphic Styler on Instagram</a>
 <canvas id="fx" aria-hidden="true"></canvas>
 
-<script src="js/core.js"></script>
+<script src="js/core.js?v=11"></script>
 <script src="js/sky.js"></script>
 <script src="js/butterfly.js"></script>
 <script src="js/films.js"></script>
 <script src="js/ocean.js"></script>
-<script src="js/main.js"></script>
-<script src="js/kofi-nudge.js?v=2" defer data-url="https://ko-fi.com/sanfitnessxx_" data-title="Enjoying the movement?" data-line="Buy me a coffee. It goes toward my classes, my gym and my Pilates certification." data-cta="Support me on Ko-fi" data-tone="dark" data-side="left"></script>
+<script src="js/main.js?v=11"></script>
+<script src="js/kofi-nudge.js?v=3" defer data-url="https://ko-fi.com/sanfitnessxx_" data-title="Enjoying the movement?" data-line="Buy me a coffee. It goes toward my classes, my gym and my Pilates certification." data-cta="Support me on Ko-fi" data-hue="ice" data-side="left"></script>
+<script src="js/display.js?v=1" defer></script>
 </body>
 </html>
