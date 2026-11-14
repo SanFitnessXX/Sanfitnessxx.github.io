@@ -27,14 +27,35 @@ var toggle=$('toggle'),lapsing=false,lapseTimer=0;
 function clockMood(){var d=new Date();return window.__moodAt(d.getHours()+d.getMinutes()/60)}
 function wantMood(){return SF.pref==='day'?'noon':SF.pref==='night'?'night':clockMood()}
 function label(){toggle.setAttribute('aria-label',root.dataset.theme==='dark'?'Switch to day':'Switch to night')}
-function setMood(name){
-  if(SF.M&&SF.M.name===name)return;
-  var prev=SF.M,M=SF.MOODS[name],flip=!prev||prev.th!==M.th;
-  SF.M=M;root.dataset.theme=M.th;root.dataset.mood=name;root.style.setProperty('--bg',M.bg);
+/* ---- night has two skins: cobalt (0, the original pure dark) and twilight (1). mix is where between them we are ---- */
+var mix=root.dataset.skin==='cobalt'?0:1,CSSK=['--ink','--soft','--line','--mark','--pool','--dusk'],driftT=0;
+function moodFor(name){var T=SF.MOODS[name],C=SF.MOODS[name+'C'];return C?SF.blend(C,T,mix):T}
+function apply(M){
+  var prev=SF.M,flip=!prev||prev.th!==M.th,css=M.css||{};
+  SF.M=M;root.dataset.theme=M.th;root.dataset.mood=M.name;root.style.setProperty('--bg',M.bg);
+  CSSK.forEach(function(k){if(k in css)root.style.setProperty(k,css[k]);else root.style.removeProperty(k)});
   document.querySelector('meta[name=theme-color]').content=M.bg;
   SF.sky.onMood();if(flip)SF.fly.build();SF.ocean.onMood(prev);
   if(reduce)SF.fly.still();
   if(toggle)label();
+}
+function setMood(name){
+  if(SF.M&&SF.M.name===name)return;
+  /* coming into the dark from the day: a fresh coin toss for which night it opens on */
+  if(SF.MOODS[name].th==='dark'&&SF.M&&SF.M.th!=='dark'&&!lapsing){mix=root.dataset.skin==='cobalt'?1:0;root.dataset.skin=mix?'twilight':'cobalt';try{localStorage.setItem('sanfit-skin',root.dataset.skin)}catch(e){}}
+  apply(moodFor(name));
+}
+/* the drift: rest on one night for a minute or two, then ease into the other over about half a minute.
+   Each step is a small blend handed to the same 1.7s cross-fades the page already uses, so it reads as one long, slow change */
+function planDrift(){clearTimeout(driftT);driftT=setTimeout(nightDrift,SF.rand(50,140)*1000)}
+function nightDrift(){
+  if(document.hidden||lapsing||SF.M.th!=='dark'){planDrift();return}
+  var from=mix,to=mix<.5?1:0,steps=Math.round(SF.rand(14,20)),n=0;
+  (function step(){
+    n++;mix=SF.lerp(from,to,SF.smooth(n/steps));
+    if(SF.M.th==='dark'&&!lapsing)apply(moodFor(SF.M.name));
+    if(n<steps)driftT=setTimeout(step,1800);else{mix=to;root.dataset.skin=to?'twilight':'cobalt';try{localStorage.setItem('sanfit-skin',root.dataset.skin)}catch(e){}planDrift()}
+  })();
 }
 function setPref(p){
   SF.pref=p;root.dataset.pref=p;
@@ -83,7 +104,9 @@ function tick(now){
 /* ---- start ---- */
 function layout(){if(SF.fxSize())SF.fly.build();SF.sky.size();SF.ocean.size();SF.fly.measure();if(reduce)SF.fly.still()}
 SF.fxSize();
-(function(){var name=wantMood(),M=SF.MOODS[name];SF.M=M;root.dataset.theme=M.th;root.dataset.mood=name})();
+(function(){var name=wantMood(),M=moodFor(name);SF.M=M;root.dataset.theme=M.th;root.dataset.mood=name})();
+if(!reduce)planDrift();
+SF.nightDrift=nightDrift;   /* SF.nightDrift() in the console starts a change right away */
 SF.fly.build();SF.sky.size();SF.sky.onMood();SF.ocean.size();SF.fly.measure();SF.sky.paintStars();label();
 addEventListener('resize',function(){layout();SF.sky.paintStars()});
 if(window.ResizeObserver)new ResizeObserver(function(){SF.sky.size();SF.ocean.size();SF.fly.measure()}).observe(document.body);

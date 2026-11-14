@@ -28,23 +28,27 @@
 -->
 <script>
 window.__moodAt=function(h){return h<5?'night':h<7.5?'dawn':h<11?'morning':h<16?'noon':h<18.5?'golden':h<20.5?'blue':'night'};
-window.__moodBg={dawn:'#f7f8fa',morning:'#ffffff',noon:'#ffffff',golden:'#f8f6f2',blue:'#0b1330',night:'#000000'};
+window.__moodBg={dawn:'#f7f8fa',morning:'#ffffff',noon:'#ffffff',golden:'#fbf5f5',blue:'#141b4a',night:'#0a1030'};
+/* night has two skins, cobalt (the original pure dark) and twilight; each visit starts on one at random and drifts between them */
+window.__cobaltBg={blue:'#0b1330',night:'#000000'};
 (function(){var r=document.documentElement,p,s,m=matchMedia('(prefers-reduced-motion: reduce)').matches,d=new Date();try{m=m||localStorage.getItem('disp-calm')==='1'}catch(e){}
 try{p=localStorage.getItem('sanfit-light')}catch(e){}
 if(p!=='day'&&p!=='night')p='auto';
 var n=p==='day'?'noon':p==='night'?'night':__moodAt(d.getHours()+d.getMinutes()/60);
-r.dataset.pref=p;r.dataset.mood=n;r.dataset.theme=(n==='blue'||n==='night')?'dark':'light';r.style.setProperty('--bg',__moodBg[n]);document.querySelector('meta[name=theme-color]').content=__moodBg[n];
+var L;try{L=localStorage.getItem('sanfit-skin')}catch(e){}var k=L==='cobalt'?'twilight':L==='twilight'?'cobalt':(Math.random()<.5?'cobalt':'twilight');try{localStorage.setItem('sanfit-skin',k)}catch(e){}var b=(k==='cobalt'&&__cobaltBg[n])||__moodBg[n];r.dataset.skin=k;
+r.dataset.pref=p;r.dataset.mood=n;r.dataset.theme=(n==='blue'||n==='night')?'dark':'light';r.style.setProperty('--bg',b);document.querySelector('meta[name=theme-color]').content=b;
 try{s=sessionStorage.getItem('sanfit-seen');sessionStorage.setItem('sanfit-seen','1')}catch(e){}
 if(!s&&!m)r.classList.add('play')})();
 </script>
-<link rel="stylesheet" href="css/site.css?v=2">
+<link rel="stylesheet" href="css/site.css?v=6">
+<link rel="stylesheet" href="css/reading-highlight.css?v=2">
 </head>
 <body>
 <canvas id="stars" aria-hidden="true"></canvas>
-<main>
+<main data-rh-scope=".links .row">
 
 <!-- 1 · hero: name, one line, the horizon -->
-<header class="top">
+<header class="top" data-rh-skip>
   <div class="sky" aria-hidden="true">
     <div class="aura o1" data-k=".8"><canvas class="a" width="360" height="360"></canvas><canvas class="b" width="360" height="360"></canvas></div>
     <div class="rays"></div>
@@ -54,7 +58,7 @@ if(!s&&!m)r.classList.add('play')})();
   <button id="toggle" type="button" aria-label="Switch to night"><i></i></button>
   <p class="line col" id="line" aria-label="Strength, one small day at a time."><span class="w" aria-hidden="true" style="--i:0"><span>Strength,</span></span> <span class="w" aria-hidden="true" style="--i:1"><span>one</span></span> <span class="w" aria-hidden="true" style="--i:2"><span>small</span></span> <span class="w" aria-hidden="true" style="--i:3"><span>day</span></span> <span class="w" aria-hidden="true" style="--i:4"><span>at</span></span> <span class="w" aria-hidden="true" style="--i:5"><span>a</span></span> <span class="w" aria-hidden="true" style="--i:6"><span>time.</span></span></p>
   <!-- the one quiet line: the way to subscribe, visible without scrolling -->
-  <p class="go col"><a href="https://ko-fi.com/sanfitnessxx_" rel="noopener"><span>Support on Ko-fi</span><svg viewBox="0 0 26 8" aria-hidden="true"><path d="M0 4h25M21.4 .9 25 4l-3.6 3.1"/></svg></a></p>
+  <p class="go col"><a href="https://ko-fi.com/sanfitnessxx_" rel="noopener"><span>Support me on Ko-fi</span><svg viewBox="0 0 26 8" aria-hidden="true"><path d="M0 4h25M21.4 .9 25 4l-3.6 3.1"/></svg></a></p>
   <div class="horizon" id="hz" aria-hidden="true"></div>
   <div class="plumb t" aria-hidden="true"></div>
   <!-- the star plays one whole day of light -->
@@ -79,15 +83,26 @@ if(!s&&!m)r.classList.add('play')})();
 </section>
 
 <!-- 3 · about. Draft in her voice: edit freely. -->
-<section class="about col" aria-label="About">
+<section class="about col" aria-label="About" data-rh-skip>
   <p class="note">I’m San. I move because it makes the rest of my day better: Pilates, Lagree, skiing, an hour at the gym. I’m still learning, and I share it here in case it helps you start, or start again.</p>
   <p class="where">Every level welcome. OC and LA.</p>
 </section>
 
-<!-- 4 · links -->
+<!-- 4 · commissions: previews of the Ko-fi listings. Every row opens the commissions page.
+     To change one, edit its title (b), price (span) and line (em). To add one, copy a row and raise --i. -->
+<section class="work col" aria-labelledby="workT">
+  <h2 class="kick" id="workT">Commissions<span>Open</span></h2>
+  <a class="row job" data-rh style="--i:0" href="https://ko-fi.com/sanfitnessxx_/commissions?commissionAlias=995e858c85" rel="noopener"><b>Studio match</b><span>from $20</span><em>Three studios matched to your area, level and budget.</em></a>
+  <a class="row job" data-rh style="--i:1" href="https://ko-fi.com/sanfitnessxx_/commissions?commissionAlias=995e858c85" rel="noopener"><b>Athleisure outfit board</b><span>from $20</span><em>One outfit with links, chosen for your style and budget. No sizes needed.</em></a>
+  <a class="row job" data-rh style="--i:2" href="https://ko-fi.com/sanfitnessxx_/commissions?commissionAlias=995e858c85" rel="noopener"><b>Send me to a class</b><span>from $40</span><em>Name a Pilates, Lagree or barre studio in OC or LA. I take the class and post an honest review.</em></a>
+  <i class="rows-end" aria-hidden="true"></i>
+  <p class="go"><a href="https://ko-fi.com/sanfitnessxx_/commissions?commissionAlias=995e858c85" rel="noopener"><span>Request on Ko-fi</span><svg viewBox="0 0 26 8" aria-hidden="true"><path d="M0 4h25M21.4 .9 25 4l-3.6 3.1"/></svg></a></p>
+</section>
+
+<!-- 5 · links -->
 <nav class="links col" aria-label="Links">
   <div class="aura o3" data-k=".5" aria-hidden="true"><canvas class="a" width="360" height="360"></canvas><canvas class="b" width="360" height="360"></canvas></div>
-  <a class="row lead" id="pass" style="--i:0" href="https://ko-fi.com/sanfitnessxx_" rel="noopener"><b>Ko-fi</b><span>Support</span><em>Classes and the gym, one coffee at a time.</em></a>
+  <a class="row lead" id="pass" style="--i:0" href="https://ko-fi.com/sanfitnessxx_" rel="noopener"><b>Ko-fi</b><span>Support</span><em>Classes, the gym and my Pilates certification.</em></a>
   <a class="row" style="--i:1" href="https://www.instagram.com/sanfitnessxx/" rel="noopener"><b>Instagram</b><span>@sanfitnessxx</span></a>
   <a class="row" style="--i:2" href="https://ig.me/m/sanfitnessxx" rel="noopener"><b>Work out with me</b><span>Message</span></a>
   <a class="row" style="--i:3" href="https://ig.me/m/sanfitnessxx" rel="noopener"><b>Collaborate</b><span>Message</span></a>
@@ -96,7 +111,7 @@ if(!s&&!m)r.classList.add('play')})();
   <i class="rows-end" aria-hidden="true"></i>
 </nav>
 
-<!-- 5 · ocean -->
+<!-- 6 · ocean -->
 <section class="sea" id="sea" aria-hidden="true"><canvas id="water"></canvas></section>
 </main>
 <footer class="foot">San Fitness xx<span class="sis"><a href="https://www.seraphicstyler.com/links" rel="noopener">Seraphic Styler</a> · <a href="https://thesoftbunnyxx.com/links/" rel="noopener">The Soft Bunny</a></span></footer>
@@ -105,13 +120,15 @@ if(!s&&!m)r.classList.add('play')})();
 <a class="sr" id="flyLink" href="https://www.instagram.com/seraphicstyler" rel="noopener">Seraphic Styler on Instagram</a>
 <canvas id="fx" aria-hidden="true"></canvas>
 
-<script src="js/core.js?v=11"></script>
-<script src="js/sky.js"></script>
+<script src="js/core.js?v=13"></script>
+<script src="js/sky.js?v=13"></script>
 <script src="js/butterfly.js"></script>
 <script src="js/films.js"></script>
-<script src="js/ocean.js"></script>
-<script src="js/main.js?v=11"></script>
+<script src="js/ocean.js?v=13"></script>
+<script src="js/main.js?v=14"></script>
 <script src="js/kofi-nudge.js?v=3" defer data-url="https://ko-fi.com/sanfitnessxx_" data-title="Enjoying the movement?" data-line="Buy me a coffee. It goes toward my classes, my gym and my Pilates certification." data-cta="Support me on Ko-fi" data-hue="ice" data-side="left"></script>
+<script src="js/kofi-panel.js?v=1" defer data-url="https://ko-fi.com/sanfitnessxx_" data-title="Buy me a coffee" data-line="Entirely optional, always appreciated. It goes toward my classes, my gym and my Pilates certification." data-serif="'San Display',Georgia,serif" data-sans="'San Text','Helvetica Neue',Arial,sans-serif" data-hue="ice"></script>
 <script src="js/display.js?v=1" defer></script>
+<script src="js/reading-highlight.js?v=3" defer></script>
 </body>
 </html>

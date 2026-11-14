@@ -10,10 +10,12 @@
 @property --ink{syntax:"<color>";inherits:true;initial-value:#0e1a38}
 @property --soft{syntax:"<color>";inherits:true;initial-value:#566488}
 @property --line{syntax:"<color>";inherits:true;initial-value:#dde5f1}
+@property --mark{syntax:"<color>";inherits:true;initial-value:#3f6fc4}
+@property --dusk{syntax:"<number>";inherits:true;initial-value:1}
 @property --ra{syntax:"<angle>";inherits:true;initial-value:0deg}
 
 :root{
-  transition:--bg 1.7s ease,--ink 1.7s ease,--soft 1.7s ease,--line 1.7s ease;
+  transition:--bg 1.7s ease,--ink 1.7s ease,--soft 1.7s ease,--line 1.7s ease,--mark 1.7s ease,--dusk 1.7s ease;
   color-scheme:light;
   --bg:#fff; --ink:#121316; --soft:#666b75; --line:#e2e4e8; --mark:#3f6fc4;
   --w:min(calc(100vw - 40px),500px); --gx:calc((100vw - var(--w))/2);
@@ -25,9 +27,14 @@
 :root[data-mood=morning]{--ray:166 200 246}
 :root[data-mood=golden]{--ray:186 198 222}
 :root[data-theme=dark]{
+  /* night: a twilight portal. Navy overhead, lavender water, a blush glow where the sun went down */
   color-scheme:dark;
-  --bg:#000; --ink:#f1f2f4; --soft:#8d93a0; --line:rgba(255,255,255,.16); --mark:#a9c6ff;
-  --rab:#fff; --pool:70 120 255; --rays:0;
+  --bg:#0a1030; --ink:#f4f2fb; --soft:#a3a3c4; --line:rgba(226,218,255,.17); --mark:#cdbfff;
+  --rab:#fff; --pool:150 126 250; --rays:0;
+}
+/* cobalt: the original night. Pure dark, cobalt water, white light. The page drifts between this and twilight */
+:root[data-theme=dark][data-skin=cobalt]{
+  --bg:#000; --ink:#f1f2f4; --soft:#8d93a0; --line:rgba(255,255,255,.16); --mark:#a9c6ff; --pool:70 120 255; --dusk:0;
 }
 
 /* ---------- 2 base ---------- */
@@ -159,6 +166,12 @@ video::-webkit-media-controls-start-playback-button{display:none!important;-webk
 
 /* ---------- 7 ocean ---------- */
 .sea{position:relative;height:clamp(420px,70vh,640px);margin-top:1.4rem}
+/* the sky over the water: where the sun went down (night, blue hour) or is going down (golden hour) */
+.sea::before{content:"";position:absolute;left:0;right:0;bottom:82%;height:min(62vh,560px);z-index:-1;pointer-events:none;opacity:0;transition:opacity 1.8s ease;
+  background:radial-gradient(46% 30% at 50% 100%,rgba(255,226,208,.42),rgba(236,172,204,.2) 46%,transparent 76%),linear-gradient(180deg,transparent 0,rgba(84,74,160,.2) 52%,rgba(160,124,196,.42) 88%,rgba(226,170,204,.5) 100%)}
+:root[data-mood=night] .sea::before,:root[data-mood=blue] .sea::before{opacity:var(--dusk)}
+:root[data-mood=blue] .sea::before{background:radial-gradient(48% 34% at 50% 100%,rgba(255,228,206,.58),rgba(240,170,204,.28) 46%,transparent 78%),linear-gradient(180deg,transparent 0,rgba(110,92,176,.26) 50%,rgba(190,140,206,.5) 88%,rgba(240,182,206,.6) 100%)}
+:root[data-mood=golden] .sea::before{opacity:1;background:radial-gradient(44% 32% at 50% 100%,rgba(255,236,206,.9),rgba(255,206,220,.5) 44%,transparent 78%),linear-gradient(180deg,transparent 0,rgba(244,214,230,.4) 50%,rgba(246,196,218,.7) 90%,rgba(252,214,214,.85) 100%)}
 #water{position:absolute;left:0;top:0;width:100%;height:100%;display:block;touch-action:pan-y}
 .foot{text-align:center;padding:1.1rem 20px max(1.4rem,env(safe-area-inset-bottom));color:var(--soft);font-size:.62rem;letter-spacing:.42em;text-transform:uppercase}
 
@@ -188,3 +201,21 @@ video::-webkit-media-controls-start-playback-button{display:none!important;-webk
 
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 .foot .sis{display:block;margin-top:.9rem;letter-spacing:.24em}.foot .sis a{color:inherit;text-decoration:none}.foot .sis a:hover{color:var(--ink,#fff)}
+
+/* ---------- commissions: previews of the Ko-fi listings, sitting between the note and the links ---------- */
+.work{position:relative;margin-top:2.3rem}
+.kick{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.5rem;font:300 .64rem/1.4 "San Text",sans-serif;letter-spacing:.3em;text-transform:uppercase;color:var(--soft)}
+.kick span{display:inline-flex;align-items:center;gap:.7em;letter-spacing:.22em}
+.kick span::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--mark);animation:breath 5s ease-in-out infinite}
+.job b{font-size:clamp(1.36rem,5.8vw,1.72rem)}
+.job span{color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
+.job em{max-width:30em}
+.work .go{margin-top:.35rem}
+.play .kick{animation:fade 1s ease 3.4s both}
+
+/* Reading highlight (reading-highlight.css/.js): faded ahead, one line lit, full ink once read.
+   Day: solid cobalt. Night (twilight and cobalt skins): the pastel rainbow, which follows
+   whichever --ink/--bg the sky has drifted to. */
+:root{--rh-ink:var(--ink);--rh-bg:var(--bg);--rh-active:var(--mark)}
+:root[data-theme=dark]{--rh-active-gradient:linear-gradient(90deg,#e4c1f9,#a9def9 35%,#d0f4de 68%,#fcf6bd)}
+:root.calm [data-rh],:root.hc [data-rh]{--rh-off:1}
